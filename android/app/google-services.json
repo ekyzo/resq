@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "916233817572",
+    "firebase_url": "https://resq-43d7d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "resq-43d7d",
+    "storage_bucket": "resq-43d7d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916233817572:android:531a4f8025e115bf000bf1",
+        "android_client_info": {
+          "package_name": "com.example.resq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTG6j7tIvQrts8ZJ0eHQ8dJ4BzwHftxPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

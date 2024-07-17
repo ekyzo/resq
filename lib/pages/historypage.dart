@@ -19,6 +19,7 @@ class _HistoryPageState extends State<HistoryPage> {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('orderHistory')
           .where('userId', isEqualTo: user.uid)
+          .orderBy('timestamp', descending: true)
           .get();
 
       return querySnapshot.docs

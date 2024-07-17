@@ -1,9 +1,6 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings, prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:resq/components/drawer.dart';
 import 'package:resq/pages/driverhistorypage.dart';
 import 'package:resq/pages/drivermenu.dart';
@@ -20,16 +17,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser!;
-
-  int index = 0;
+  bool isLoading = false;
 
   void goToHomePage() {
-    //pop menu drawer
-    Navigator.pop(context);
+    Navigator.pop(context); // Pop menu drawer
   }
 
   void goToHistoryPage() async {
-    Navigator.pop(context);
+    Navigator.pop(context); // Pop menu drawer
+
+    setState(() {
+      isLoading = true; // Show loading indicator
+    });
 
     try {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -70,14 +69,16 @@ class _HomePageState extends State<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching user document: $e')),
       );
+    } finally {
+      setState(() {
+        isLoading = false; // Hide loading indicator
+      });
     }
   }
 
   void goToProfilePage() {
-    //pop menu drawer
-    Navigator.pop(context);
+    Navigator.pop(context); // Pop menu drawer
 
-    //go to history page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -86,7 +87,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future signOut() async {
+  Future<void> signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
       print('User signed out successfully');
@@ -119,26 +120,40 @@ class _HomePageState extends State<HomePage> {
                     .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return Center(
+                        child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color.fromARGB(255, 138, 1, 1),
+                      ),
+                    ));
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return Center(child: Text('User data not found'));
                   } else {
                     final userData =
                         snapshot.data!.data() as Map<String, dynamic>;
                     String userType = userData['userType'];
 
-                    // Check the user type and navigate to the appropriate page
                     if (userType == 'Driver') {
                       return DriverMenu();
                     } else if (userType == 'Patient') {
                       return PatientMenu();
                     } else {
-                      return Text('Unknown user type: $userType');
+                      return Center(
+                          child: Text('Unknown user type: $userType'));
                     }
                   }
                 },
               ),
             ),
+            if (isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black54,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
             Positioned(
               top: 0,
               left: 0,

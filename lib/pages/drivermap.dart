@@ -116,6 +116,7 @@ class _DriverMapState extends State<DriverMap> {
           LatLng(widget.patientLocation.latitude,
               widget.patientLocation.longitude),
         );
+        _updateCameraBounds(); // Update camera bounds to ensure the new location is shown on the map
       });
     }
   }
@@ -165,10 +166,14 @@ class _DriverMapState extends State<DriverMap> {
         FirebaseFirestore.instance.collection('order').doc(widget.orderId);
 
     _locationSubscription = documentReference.snapshots().listen((snapshot) {
-      if (snapshot.exists) {
+      if (snapshot.exists && snapshot.data() != null) {
         GeoPoint geoPoint = snapshot['driverLocation'];
+        print(
+            'Driver location updated: ${geoPoint.latitude}, ${geoPoint.longitude}'); // Debugging line
         _updateDriverLocation(geoPoint.latitude, geoPoint.longitude);
         _drawRoute();
+      } else {
+        print('No driver location data found'); // Debugging line
       }
     });
   }

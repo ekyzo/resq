@@ -143,7 +143,7 @@ class _DriverMenuState extends State<DriverMenu> {
             ),
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 25),
+              padding: EdgeInsets.symmetric(vertical: 35),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -226,6 +226,12 @@ class _DriverMenuState extends State<DriverMenu> {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.none) {
+                            return Center(
+                                child:
+                                    Text('Failed to connect to the server.'));
                           }
                           if (snapshot.hasError) {
                             return Center(

@@ -145,16 +145,16 @@ class _PatientMenuState extends State<PatientMenu> {
         final data = doc.data() as Map<String, dynamic>;
         final driverLocation = data['driverLocation'] as GeoPoint?;
         final orderStatus = data['status'];
-        final driverPickedUp = data['driverPickedUp'] ?? false; // New field
+        final driverPickedUp = data['driverPickedUp'] ?? false;
         final driverId = data['driverId'];
         final routePoints = data['routePoints'];
-        final estimatedTime = data['estimatedTime']; // Retrieve the ETA
+        final estimatedTime = data['estimatedTime'];
         final String? imageUrl = data['imageUrl'];
 
         setState(() {
           _orderStatus = orderStatus;
-          _estimatedTime = estimatedTime; // Set the ETA
-          _driverPickedUp = driverPickedUp; // Update local state
+          _estimatedTime = estimatedTime;
+          _driverPickedUp = driverPickedUp;
           _imageUrl = imageUrl;
         });
 
@@ -162,7 +162,9 @@ class _PatientMenuState extends State<PatientMenu> {
           setState(() {
             _driverLocation =
                 LatLng(driverLocation.latitude, driverLocation.longitude);
-            // Clear previous driver marker and add updated marker
+
+            _logger.info('Updating driver location: $driverLocation');
+
             _markers.removeWhere(
                 (marker) => marker.markerId.value == 'driver_location');
             _markers.add(
@@ -175,12 +177,16 @@ class _PatientMenuState extends State<PatientMenu> {
                 ),
               ),
             );
+
+            mapController?.animateCamera(
+              CameraUpdate.newLatLng(
+                LatLng(driverLocation.latitude, driverLocation.longitude),
+              ),
+            );
           });
 
-          // Draw route if order is accepted and routePoints are available
           if (orderStatus == 'accepted') {
             if (routePoints != null) {
-              // Decode and draw the saved polyline
               final decodedPoints = _decodePolyline(routePoints);
               setState(() {
                 _polylines = {
@@ -197,7 +203,6 @@ class _PatientMenuState extends State<PatientMenu> {
             }
             _fetchDriverDetails(driverId);
           } else {
-            // Clear polylines if the order is not accepted
             setState(() {
               _polylines = {};
               _driverName = null;
@@ -205,11 +210,11 @@ class _PatientMenuState extends State<PatientMenu> {
             });
           }
 
-          // Draw route with updated driver location
           if (orderStatus == 'accepted') {
             _drawRoute();
           }
         }
+
         if (orderStatus == 'completed') {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.pushReplacement(

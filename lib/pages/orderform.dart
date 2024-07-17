@@ -40,8 +40,56 @@ class _MyOrderFormState extends State<MyOrderForm> {
   }
 
   Future<void> _pickImage() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Select Image Source',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                GestureDetector(
+                  child: Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _pickImageFromGallery();
+                  },
+                ),
+                Padding(padding: EdgeInsets.all(8.0)),
+                GestureDetector(
+                  child: Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _pickImageFromCamera();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImageFromGallery() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
@@ -321,7 +369,7 @@ class _MyOrderFormState extends State<MyOrderForm> {
                   });
                 },
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -330,7 +378,7 @@ class _MyOrderFormState extends State<MyOrderForm> {
                       Row(
                         children: [
                           Text(
-                            'Image Upload (Optional) :',
+                            'Image Upload (Optional)',
                             style: TextStyle(fontSize: 16),
                           ),
                           SizedBox(
@@ -373,14 +421,21 @@ class _MyOrderFormState extends State<MyOrderForm> {
                       fit: BoxFit.fitHeight,
                     )
                   : Text('No image selected.'),
-              SizedBox(height: 32),
+              SizedBox(height: 40),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 138, 1, 1),
-                  foregroundColor: Colors.white,
-                ),
+                    backgroundColor: Color.fromARGB(255, 138, 1, 1),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 14,
+                    )),
                 onPressed: _submitOrder,
-                child: Text('Order Now'),
+                child: Text(
+                  'Order Now',
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
               ),
             ],
           ),

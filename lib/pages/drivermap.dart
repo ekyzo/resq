@@ -314,8 +314,8 @@ class _DriverMapState extends State<DriverMap> {
         await launchUrl(url);
       } else {
         // Fallback to launch using a different method
-        if (await launch(url.toString())) {
-          // Call launched successfully
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url);
         } else {
           _showSnackBar('Could not launch $url', Colors.red);
           _logger.severe('Could not launch URL: $url');

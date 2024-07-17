@@ -23,6 +23,11 @@ class _MyOrderFormState extends State<MyOrderForm> {
   final user = FirebaseAuth.instance.currentUser!;
   File? _selectedImage;
 
+  final _typeTooltipKey = GlobalKey<TooltipState>();
+  final _descriptionTooltipKey = GlobalKey<TooltipState>();
+  final _severityTooltipKey = GlobalKey<TooltipState>();
+  final _imageTooltipKey = GlobalKey<TooltipState>();
+
   Future<Map<String, dynamic>> _fetchUserDetails() async {
     final userDoc = await FirebaseFirestore.instance
         .collection('users')
@@ -143,6 +148,10 @@ class _MyOrderFormState extends State<MyOrderForm> {
     });
   }
 
+  void _showTooltip(GlobalKey<TooltipState> key) {
+    key.currentState?.ensureTooltipVisible();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,9 +183,26 @@ class _MyOrderFormState extends State<MyOrderForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Type of Emergency: ',
-                style: TextStyle(fontSize: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Type of Emergency: ',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showTooltip(_typeTooltipKey),
+                    child: Tooltip(
+                      key: _typeTooltipKey,
+                      message:
+                          'Select the type of emergency you are experiencing.',
+                      child: Icon(
+                        Icons.help_outline,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               DropdownButtonFormField<String>(
                 value: _emergencyType,
@@ -228,9 +254,25 @@ class _MyOrderFormState extends State<MyOrderForm> {
                 ),
               ),
               SizedBox(height: 24),
-              Text(
-                'Brief Description: ',
-                style: TextStyle(fontSize: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Brief Description: ',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showTooltip(_descriptionTooltipKey),
+                    child: Tooltip(
+                      key: _descriptionTooltipKey,
+                      message: 'Provide a brief description of the emergency.',
+                      child: Icon(
+                        Icons.help_outline,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 10,
@@ -244,11 +286,28 @@ class _MyOrderFormState extends State<MyOrderForm> {
                 ),
               ),
               SizedBox(height: 24),
-              Text(
-                'Severity Scale: $_severity/5.0',
-                style: TextStyle(
-                  fontSize: 16,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Severity Scale: $_severity/5.0',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showTooltip(_severityTooltipKey),
+                    child: Tooltip(
+                      key: _severityTooltipKey,
+                      message:
+                          "Emergency severity: 1 (Noncritical) to 5 (Very Critical).",
+                      child: Icon(
+                        Icons.help_outline,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Slider(
                 thumbColor: Color.fromARGB(255, 138, 1, 1),
@@ -264,23 +323,44 @@ class _MyOrderFormState extends State<MyOrderForm> {
               ),
               SizedBox(height: 20),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Image Upload (Optional) :',
-                    style: TextStyle(fontSize: 16),
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Image Upload (Optional) :',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(255, 138, 1, 1),
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                            ),
+                            onPressed: _pickImage,
+                            child: Text('Select Image'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 138, 1, 1),
-                      foregroundColor: Colors.white,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  GestureDetector(
+                    onTap: () => _showTooltip(_imageTooltipKey),
+                    child: Tooltip(
+                      key: _imageTooltipKey,
+                      message:
+                          'Upload an image related to the emergency, if available.',
+                      child: Icon(
+                        Icons.help_outline,
+                        color: Colors.grey,
+                      ),
                     ),
-                    onPressed: _pickImage,
-                    child: Text('Select Image'),
                   ),
                 ],
               ),

@@ -19,6 +19,7 @@ class _DriverHistoryPageState extends State<DriverHistoryPage> {
     return FirebaseFirestore.instance
         .collection('orderHistory')
         .where('driverId', isEqualTo: user.uid)
+        .orderBy('timestamp', descending: true)
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {

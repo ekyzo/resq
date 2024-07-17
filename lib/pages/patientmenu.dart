@@ -378,18 +378,6 @@ class _PatientMenuState extends State<PatientMenu> {
                 }
               }
 
-              // Move the order document to 'orderHistory'
-              await FirebaseFirestore.instance
-                  .collection('orderHistory')
-                  .doc(orderId)
-                  .set(orderData);
-
-              // Update the status in the history document
-              await FirebaseFirestore.instance
-                  .collection('orderHistory')
-                  .doc(orderId)
-                  .update({'status': 'cancelled'});
-
               // Delete the order document from 'order' collection
               await FirebaseFirestore.instance
                   .collection('order')

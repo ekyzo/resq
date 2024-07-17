@@ -406,8 +406,7 @@ class _PatientMenuState extends State<PatientMenu> {
                   _estimatedTime = null;
                   _markers.removeWhere(
                       (marker) => marker.markerId.value == 'driver_location');
-                  _polylines =
-                      {}; // Clear polylines when the order is cancelled
+                  _polylines = {}; // Clear polylines if order is cancelled
                 });
               }
 
@@ -481,8 +480,8 @@ class _PatientMenuState extends State<PatientMenu> {
         await launchUrl(url);
       } else {
         // Fallback to launch using a different method
-        if (await launch(url.toString())) {
-          // Call launched successfully
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url);
         } else {
           _showSnackBar('Could not launch $url', Colors.red);
           _logger.severe('Could not launch URL: $url');
